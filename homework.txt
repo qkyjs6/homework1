@@ -1,0 +1,94 @@
+#include <QApplication>
+#include <QWidget>
+#include <QMouseEvent>
+#include <QLabel>
+#include <QDebug>
+#include <QDateTime>
+#include <QTimer>
+#include <QMouseEvent>
+
+class QLabelClock: public QLabel{
+public:
+    QTimer *timer;
+    int refreshEnable = 1;
+    QLabelClock(QWidget *parent):
+        QLabel(parent)
+    {
+        this->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss dddd"));
+        //创建定时器
+        timer = new QTimer(parent);
+        //timeout
+        connect(timer,&QTimer::timeout,this,&QLabelClock::refresh);
+        timer->start(1000);
+
+    }
+
+    void mousePressEvent(QMouseEvent *ev)
+    {
+        if(ev->button() == Qt::LeftButton)
+            refreshToggle();
+    }
+
+
+    void refresh()
+    {
+        if(1 == refreshEnable)
+        {
+            this->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss dddd"));
+            this->setGeometry(0,150-30,300,30);
+            this->setStyleSheet("color:white");
+        }
+
+    }
+
+    void refreshToggle()
+    {
+        if(1 == refreshEnable)
+            refreshEnable = 0;
+        else
+            refreshEnable = 1;
+    }
+
+};
+
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    QWidget w;
+
+    w.setWindowTitle("12组_祁克炎");//主界面命名
+    w.resize(300,150);//设定主界面的大小
+    w.setStyleSheet("background-color:black");
+//    w.setGeometry(100,100,250,150);
+
+    QLabel *LabelTemperatureData =new QLabel(&w);
+    LabelTemperatureData->setText("36.5");
+    LabelTemperatureData->setGeometry(50,0,150,150);
+    LabelTemperatureData->setStyleSheet("font-family: Microsoft YaHei;font-size:60px;background-color: black;color:rgb(255,0,255)");//配置样式表
+
+    //创建标签控件
+    QLabel *LabelTemperatureText = new QLabel(&w);
+    LabelTemperatureText->setText("T-"); //修改标签内容
+    LabelTemperatureText->setGeometry(0,50,50,50);
+    LabelTemperatureText->setStyleSheet("font: Microsoft YaHei;font-size:30px;background-color: black;color:rgb(255,0,255)");//配置样式表
+
+    QLabel *LabelTemperatureseason = new QLabel(&w);
+    LabelTemperatureseason->setText("天气：晴"); //修改标签内容
+    LabelTemperatureseason->setGeometry(200,50,100,50);
+    LabelTemperatureseason->setStyleSheet("font: Microsoft YaHei;font-size:20px;background-color: black;color:rgb(255,0,255)");//配置样式表
+
+
+    //添加摄氏度符号℃
+    QLabel *LabelTemperatureSign =new QLabel(&w);
+    LabelTemperatureSign->setText("℃");
+    LabelTemperatureSign->setGeometry(160,0,40,40);
+    LabelTemperatureSign->setStyleSheet("font-family: Microsoft YaHei;font-size:30px;background-color: black;color:rgb(255,0,255)");//配置样式表
+
+    //显示时间
+    QLabelClock *labelClock = new QLabelClock(&w);
+    labelClock->setGeometry(0,150-30,300,30);
+
+    w.show();
+    return a.exec();
+}
